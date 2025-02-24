@@ -8,13 +8,26 @@ impl Info {
     pub fn new(pre_period: usize, period: usize) -> Self {
         Self { pre_period, period }
     }
+
+    pub fn check(&self, elements: &[usize]) -> bool {
+        for index in (self.pre_period + self.period)..elements.len() {
+            if elements[index] != elements[index - self.period] {
+                return false;
+            }
+        }
+        true
+    }
+}
+
+pub fn detect_cycle(elements: &[usize]) -> Option<Info> {
+    detect_cycle_from(1, elements)
 }
 
 /// The `detect_cycle` tries to find a cycle if it exists.
 ///
 /// It uses [floyds detection algorithm](https://en.wikipedia.org/wiki/Cycle_detection)
-pub fn detect_cycle(elements: &[usize]) -> Option<Info> {
-    let (mut tortoise, mut hare) = (1, 2);
+fn detect_cycle_from(start: usize, elements: &[usize]) -> Option<Info> {
+    let (mut tortoise, mut hare) = (start, 2 * start);
 
     while hare < elements.len() && elements[tortoise] != elements[hare] {
         tortoise += 1;
@@ -88,5 +101,15 @@ mod tests {
                 assert!(false);
             }
         }
+    }
+
+    #[test]
+    fn info_can_check_if_an_sequence_adheres() {
+        let info = Info::new(3, 7);
+        let passes = vec![0, 1, 2, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7];
+        let fails = vec![0, 1, 2, 1, 2, 3, 4, 5, 6, 7, 1, 2, 37, 4, 5, 6, 7];
+
+        assert!(info.check(&passes));
+        assert!(!info.check(&fails));
     }
 }
