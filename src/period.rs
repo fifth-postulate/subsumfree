@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct Info {
     pre_period: usize,
@@ -16,6 +18,12 @@ impl Info {
             }
         }
         true
+    }
+}
+
+impl Display for Info {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {})", self.pre_period, self.period)
     }
 }
 

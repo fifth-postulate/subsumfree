@@ -31,7 +31,7 @@ fn main() {
         let mod_seq: Vec<usize> = seq.iter().map(|n| n % modules).collect();
         match detect_cycle(&mod_seq) {
             Some(info) if info.check(&mod_seq) => {
-                print!("{}: {:?}", modules, info);
+                print!("{}: {}", modules, info);
                 if input.verbose {
                     print!("{:?}", mod_seq);
                 }
