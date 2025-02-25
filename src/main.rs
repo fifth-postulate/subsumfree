@@ -4,8 +4,10 @@ use sequence::period::detect_cycle;
 
 #[derive(Parser)]
 struct Input {
-    #[arg(short, long, default_value_t = 100)]
+    #[arg(short, long, default_value_t = 500)]
     length: usize,
+    #[arg(short, long, default_value_t = 1000)]
+    ceiling: usize,
     #[arg(long, default_value_t = 2)]
     min: usize,
     #[arg(long, default_value_t = 50)]
@@ -20,11 +22,11 @@ struct Input {
 fn main() {
     let input = Input::parse();
 
-    let seq: Vec<usize> = Sequence::new(input.a, input.b, input.c)
+    let seq: Vec<usize> = Sequence::with_maximum(input.a, input.b, input.c, input.ceiling)
         .take(input.length)
         .collect();
     if input.verbose {
-        println!("{:?}", seq);
+        println!("{} {:?}", seq.len(), seq);
     }
 
     for modules in input.min..input.max {
