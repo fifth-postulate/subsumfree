@@ -38,7 +38,6 @@ fn main() {
                     print!("{:?}", mod_seq);
                 }
                 println!();
-                break;
             }
             _ => {
                 // do nothing

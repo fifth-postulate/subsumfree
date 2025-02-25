@@ -22,23 +22,26 @@ fn main() {
 
     for a in 1..=input.a {
         for b in (a + 1)..=input.b {
-            'candidate: for c in (b + 1)..=input.c {
+            for c in (b + 1)..=input.c {
                 let seq: Vec<usize> = Sequence::with_maximum(a, b, c, input.ceiling)
                     .take(input.length)
                     .collect();
+                let mut found = false;
                 for modules in input.min..input.max {
                     let mod_seq: Vec<usize> = seq.iter().map(|n| n % modules).collect();
                     match detect_cycle(&mod_seq) {
                         Some(info) if info.check(&mod_seq) => {
                             println!("{} {} {}: {} {}", a, b, c, modules, info);
-                            continue 'candidate;
+                            found = true;
                         }
                         _ => {
                             // do nothing
                         }
                     }
                 }
-                println!("{} {} {}: ?", a, b, c);
+                if !found {
+                    println!("{} {} {}: ?", a, b, c);
+                }
             }
         }
     }
