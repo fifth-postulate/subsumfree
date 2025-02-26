@@ -1,19 +1,23 @@
 use std::cmp::Ordering;
+use std::collections::BTreeSet;
+use std::ops::Bound;
 
 pub mod period;
 
 #[derive(Debug, PartialEq, Eq)]
 enum ItemCandidate {
-    Index(usize, usize),
+    Index(usize, usize, usize, usize, usize),
     Element(usize),
 }
 
 impl ItemCandidate {
     fn next(&self) -> Self {
         match self {
-            ItemCandidate::Index(index, c) if *index < 2 => ItemCandidate::Index(index + 1, *c),
-            ItemCandidate::Index(_, c) => ItemCandidate::Element(*c),
-            ItemCandidate::Element(c) => ItemCandidate::Element(*c + 1),
+            ItemCandidate::Index(index, a, b, c, n) if *index < 2 => {
+                ItemCandidate::Index(index + 1, *a, *b, *c, *n)
+            }
+            ItemCandidate::Index(_, _, _, _, n) => ItemCandidate::Element(*n),
+            ItemCandidate::Element(n) => ItemCandidate::Element(*n + 1),
         }
     }
 }
@@ -21,15 +25,12 @@ impl ItemCandidate {
 impl Ord for ItemCandidate {
     fn cmp(&self, other: &Self) -> Ordering {
         match self {
-            ItemCandidate::Index(i, _) => match other {
-                ItemCandidate::Index(j, _) => {
-                    println!("-->: {} {} {:?}", i, j, i.cmp(j));
-                    i.cmp(j)
-                }
+            ItemCandidate::Index(i, _, _, _, _) => match other {
+                ItemCandidate::Index(j, _, _, _, _) => i.cmp(j),
                 ItemCandidate::Element(_) => Ordering::Less,
             },
             ItemCandidate::Element(n) => match other {
-                ItemCandidate::Index(_, _) => Ordering::Greater,
+                ItemCandidate::Index(_, _, _, _, _) => Ordering::Greater,
                 ItemCandidate::Element(m) => n.cmp(m),
             },
         }
@@ -45,24 +46,25 @@ impl PartialOrd for ItemCandidate {
 #[derive(Debug)]
 pub struct Sequence {
     current: ItemCandidate,
-    elements: Vec<usize>,
+    elements: BTreeSet<usize>,
     maximum: Option<ItemCandidate>,
 }
 
 impl Sequence {
     pub fn new(a: usize, b: usize, c: usize) -> Self {
-        Self {
-            current: ItemCandidate::Index(0, c + 1),
-            elements: vec![a, b, c],
-            maximum: Option::None,
-        }
+        Sequence::initialize(a, b, c, Option::None)
     }
 
     pub fn with_maximum(a: usize, b: usize, c: usize, maximum: usize) -> Self {
+        Sequence::initialize(a, b, c, Option::Some(ItemCandidate::Element(maximum)))
+    }
+
+    fn initialize(a: usize, b: usize, c: usize, maximum: Option<ItemCandidate>) -> Self {
+        let elements: BTreeSet<usize> = vec![a, b, c].iter().cloned().collect();
         Self {
-            current: ItemCandidate::Index(0, c + 1),
-            elements: vec![a, b, c],
-            maximum: Option::Some(ItemCandidate::Element(maximum)),
+            current: ItemCandidate::Index(0, a, b, c, c + 1),
+            elements,
+            maximum,
         }
     }
 }
@@ -80,14 +82,20 @@ impl Iterator for Sequence {
                 .unwrap_or(true)
         {
             match self.current {
-                ItemCandidate::Index(index, _) => {
-                    result = Option::Some(self.elements[index]);
+                ItemCandidate::Index(0, a, _, _, _) => {
+                    result = Option::Some(a);
+                }
+                ItemCandidate::Index(1, _, b, _, _) => {
+                    result = Option::Some(b);
+                }
+                ItemCandidate::Index(_, _, _, c, _) => {
+                    result = Option::Some(c);
                 }
                 ItemCandidate::Element(c) => {
                     match express(c, &self.elements) {
                         ExpressionResult::Unexpressable => {
                             result = Option::Some(c);
-                            self.elements.push(c);
+                            self.elements.insert(c);
                         }
                         ExpressionResult::Expressable(_) => {
                             // try the next item candidate
@@ -107,26 +115,16 @@ pub enum ExpressionResult {
     Expressable(Vec<[usize; 3]>),
 }
 
-pub fn express(n: usize, elements: &[usize]) -> ExpressionResult {
+pub fn express(n: usize, elements: &BTreeSet<usize>) -> ExpressionResult {
     let mut expressions = vec![];
-    for i in 0..elements.len() {
-        let p = elements[i];
-        if p >= n {
-            break;
-        }
-        for j in (i + 1)..elements.len() {
-            let q = elements[j];
-            if (p + q) >= n {
+    for p in elements.range(1..n) {
+        for q in elements.range((Bound::Excluded(*p), Bound::Excluded(n))) {
+            if p + q >= n {
                 break;
             }
-            for k in (j + 1)..elements.len() {
-                let r = elements[k];
-                if (p + q + r) > n {
-                    break;
-                }
-                if (p + q + r) == n {
-                    expressions.push([p, q, r])
-                }
+            let r = n - p - q;
+            if *q < r && elements.contains(&r) {
+                expressions.push([*p, *q, r]);
             }
         }
     }
@@ -143,11 +141,11 @@ mod tests {
 
     #[test]
     fn item_candidates_are_ordered() {
-        assert!(ItemCandidate::Index(0, 37) < ItemCandidate::Index(1, 51));
-        assert!(ItemCandidate::Index(2, 37) > ItemCandidate::Index(1, 51));
-        assert!(ItemCandidate::Index(0, 37) < ItemCandidate::Element(51));
-        assert!(ItemCandidate::Index(1, 37) < ItemCandidate::Element(51));
-        assert!(ItemCandidate::Index(2, 37) < ItemCandidate::Element(51));
+        assert!(ItemCandidate::Index(0, 1, 3, 5, 37) < ItemCandidate::Index(1, 1, 3, 5, 51));
+        assert!(ItemCandidate::Index(2, 1, 3, 5, 37) > ItemCandidate::Index(1, 1, 3, 4, 51));
+        assert!(ItemCandidate::Index(0, 1, 3, 5, 37) < ItemCandidate::Element(51));
+        assert!(ItemCandidate::Index(1, 1, 3, 5, 37) < ItemCandidate::Element(51));
+        assert!(ItemCandidate::Index(2, 1, 3, 5, 37) < ItemCandidate::Element(51));
         assert!(ItemCandidate::Element(37) < ItemCandidate::Element(51));
         assert!(ItemCandidate::Element(51) > ItemCandidate::Element(37));
     }
