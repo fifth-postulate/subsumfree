@@ -2,8 +2,8 @@ use std::fmt::Display;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Info {
-    pre_period: usize,
-    period: usize,
+    pub pre_period: usize,
+    pub period: usize,
 }
 
 impl Info {
