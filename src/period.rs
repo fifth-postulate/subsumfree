@@ -28,43 +28,19 @@ impl Display for Info {
 }
 
 pub fn detect_cycle(elements: &[usize]) -> Option<Info> {
-    detect_cycle_from(1, elements)
-}
-
-/// The `detect_cycle` tries to find a cycle if it exists.
-///
-/// It uses [floyds detection algorithm](https://en.wikipedia.org/wiki/Cycle_detection)
-fn detect_cycle_from(start: usize, elements: &[usize]) -> Option<Info> {
-    let (mut tortoise, mut hare) = (start, 2 * start);
-
-    while hare < elements.len() && elements[tortoise] != elements[hare] {
-        tortoise += 1;
-        hare += 2;
-    }
-
-    if hare < elements.len() {
-        // There is a cycle
-        tortoise = 0;
-        while hare < elements.len() && elements[tortoise] != elements[hare] {
-            tortoise += 1;
-            hare += 1;
-        }
-        if hare < elements.len() {
-            let pre_period = tortoise;
-            hare = tortoise + 1;
-            let mut period = 1;
-            while elements[tortoise] != elements[hare] {
-                hare += 1;
-                period += 1;
+    for pre_period in 0..(elements.len() / 2) {
+        for period in 1..(elements.len() / 2) {
+            if elements
+                .iter()
+                .skip(pre_period + period)
+                .zip(elements.iter().skip(pre_period))
+                .all(|(l, r)| l == r)
+            {
+                return Option::Some(Info::new(pre_period, period));
             }
-            Option::Some(Info::new(pre_period, period))
-        } else {
-            // Whoops, there is a cycle but ran out of elements for floyd algorithm.
-            Option::None
         }
-    } else {
-        Option::None
     }
+    Option::None
 }
 
 mod tests {
@@ -76,7 +52,7 @@ mod tests {
 
         let info = detect_cycle(&sequence);
 
-        assert!(info.is_none())
+        assert!(info.is_none());
     }
 
     #[test]
@@ -84,11 +60,10 @@ mod tests {
         let sequence: Vec<usize> = (0..3).cycle().take(100).collect();
 
         match detect_cycle(&sequence) {
-            Option::Some(info) => {
-                println!("{:?}", info);
+            Option::Some(info) if info.check(&sequence) => {
                 assert_eq!(info, Info::new(0, 3));
             }
-            Option::None => {
+            _ => {
                 assert!(false);
             }
         }

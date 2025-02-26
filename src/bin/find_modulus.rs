@@ -8,10 +8,8 @@ struct Input {
     length: usize,
     #[arg(short, long, default_value_t = 1000)]
     ceiling: usize,
-    #[arg(long, default_value_t = 2)]
-    min: usize,
-    #[arg(long, default_value_t = 50)]
-    max: usize,
+    #[arg(long, default_value_t = 1)]
+    start: usize,
     #[arg(short, long, default_value_t = false)]
     verbose: bool,
     a: usize,
@@ -29,19 +27,15 @@ fn main() {
         println!("{} {:?}", seq.len(), seq);
     }
 
-    for modules in input.min..input.max {
-        let mod_seq: Vec<usize> = seq.iter().map(|n| n % modules).collect();
-        match detect_cycle(&mod_seq) {
-            Some(info) if info.check(&mod_seq) => {
-                print!("{}: {}", modules, info);
-                if input.verbose {
-                    print!("{:?}", mod_seq);
-                }
-                println!();
-            }
-            _ => {
-                // do nothing
-            }
+    let differences: Vec<usize> = seq.windows(2).map(|t| t[1] - t[0]).collect();
+    if input.verbose {
+        println!("{} {:?}", differences.len(), differences);
+    }
+
+    match detect_cycle(&differences) {
+        Some(info) if info.check(&differences) => {
+            println!("{}", info);
         }
+        _ => println!("?"),
     }
 }
