@@ -2,6 +2,7 @@ use std::cmp::Ordering;
 use std::collections::BTreeSet;
 use std::ops::Bound;
 
+pub mod character;
 pub mod period;
 
 #[derive(Debug, PartialEq, Eq)]
