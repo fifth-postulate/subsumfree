@@ -25,6 +25,29 @@ impl Character {
             repeating,
         }
     }
+
+    pub fn write_walnut<T>(&self, name: &str, f: &mut T) -> Result<(), std::io::Error>
+    where
+        T: std::io::Write,
+    {
+        for r in &self.repeating {
+            writeln!(f, "def is{} \"Ek z=k*{}+{}\":", r, self.modulus, r)?;
+        }
+        let mut definitions: Vec<String> = Vec::new();
+        for unique in &self.unique {
+            definitions.push(format!("z={}", unique));
+        }
+        for repeating in &self.repeating {
+            definitions.push(format!("$is{}(z)", repeating));
+        }
+        let definition = definitions.join(" | ");
+        writeln!(f, "\ndef {} \"{}\":", name, definition)?;
+        writeln!(
+            f,
+            "\neval prop_{0} \"Az z>0 => (${0}(z) <=> z>0 & ~(E a,b,c a<b & b<c & ${0}(a) & ${0}(b) & ${0}(c) & a+b+c=z))\"::",
+            name
+        )
+    }
 }
 
 impl Display for Character {
