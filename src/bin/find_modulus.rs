@@ -8,8 +8,6 @@ struct Input {
     length: usize,
     #[arg(short, long, default_value_t = 1000)]
     ceiling: usize,
-    #[arg(long, default_value_t = 1)]
-    start: usize,
     #[arg(short, long, default_value_t = false)]
     verbose: bool,
     a: usize,

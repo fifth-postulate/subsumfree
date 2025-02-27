@@ -1,5 +1,5 @@
+use crate::period;
 use crate::period::detect_cycle;
-use crate::{Sequence, period};
 use std::collections::BTreeSet as Set;
 use std::fmt::Display;
 
