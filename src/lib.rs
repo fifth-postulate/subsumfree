@@ -7,17 +7,19 @@ pub mod period;
 
 #[derive(Debug, PartialEq, Eq)]
 enum ItemCandidate {
-    Index(usize, Vec<usize>, usize),
+    Index(usize, Vec<usize>),
     Element(usize),
 }
 
 impl ItemCandidate {
     fn next(&self) -> Self {
         match self {
-            ItemCandidate::Index(index, initial, n) if (*index + 1) < initial.len() => {
-                ItemCandidate::Index(index + 1, initial.clone(), *n)
+            ItemCandidate::Index(index, initial) if (*index + 1) < initial.len() => {
+                ItemCandidate::Index(index + 1, initial.clone())
             }
-            ItemCandidate::Index(_, _, n) => ItemCandidate::Element(*n),
+            ItemCandidate::Index(_, initial) => {
+                ItemCandidate::Element(initial[initial.len() - 1] + 1)
+            }
             ItemCandidate::Element(n) => ItemCandidate::Element(*n + 1),
         }
     }
@@ -26,12 +28,12 @@ impl ItemCandidate {
 impl Ord for ItemCandidate {
     fn cmp(&self, other: &Self) -> Ordering {
         match self {
-            ItemCandidate::Index(i, _, _) => match other {
-                ItemCandidate::Index(j, _, _) => i.cmp(j),
+            ItemCandidate::Index(i, _) => match other {
+                ItemCandidate::Index(j, _) => i.cmp(j),
                 ItemCandidate::Element(_) => Ordering::Less,
             },
             ItemCandidate::Element(n) => match other {
-                ItemCandidate::Index(_, _, _) => Ordering::Greater,
+                ItemCandidate::Index(_, _) => Ordering::Greater,
                 ItemCandidate::Element(m) => n.cmp(m),
             },
         }
@@ -62,9 +64,8 @@ impl Sequence {
 
     fn initialize(initial: Vec<usize>, maximum: Option<ItemCandidate>) -> Self {
         let elements: BTreeSet<usize> = initial.iter().cloned().collect();
-        let next = initial[initial.len() - 1] + 1;
         Self {
-            current: ItemCandidate::Index(0, initial, next),
+            current: ItemCandidate::Index(0, initial),
             elements,
             maximum,
         }
@@ -84,7 +85,7 @@ impl Iterator for Sequence {
                 .unwrap_or(true)
         {
             match &self.current {
-                ItemCandidate::Index(index, initial, _) => {
+                ItemCandidate::Index(index, initial) => {
                     result = Option::Some(initial[*index]);
                 }
                 ItemCandidate::Element(c) => {
@@ -137,15 +138,11 @@ mod tests {
 
     #[test]
     fn item_candidates_are_ordered() {
-        assert!(
-            ItemCandidate::Index(0, vec![1, 3, 5], 37) < ItemCandidate::Index(1, vec![1, 3, 5], 51)
-        );
-        assert!(
-            ItemCandidate::Index(2, vec![1, 3, 5], 37) > ItemCandidate::Index(1, vec![1, 3, 4], 51)
-        );
-        assert!(ItemCandidate::Index(0, vec![1, 3, 5], 37) < ItemCandidate::Element(51));
-        assert!(ItemCandidate::Index(1, vec![1, 3, 5], 37) < ItemCandidate::Element(51));
-        assert!(ItemCandidate::Index(2, vec![1, 3, 5], 37) < ItemCandidate::Element(51));
+        assert!(ItemCandidate::Index(0, vec![1, 3, 5]) < ItemCandidate::Index(1, vec![1, 3, 5]));
+        assert!(ItemCandidate::Index(2, vec![1, 3, 5]) > ItemCandidate::Index(1, vec![1, 3, 4]));
+        assert!(ItemCandidate::Index(0, vec![1, 3, 5]) < ItemCandidate::Element(51));
+        assert!(ItemCandidate::Index(1, vec![1, 3, 5]) < ItemCandidate::Element(51));
+        assert!(ItemCandidate::Index(2, vec![1, 3, 5]) < ItemCandidate::Element(51));
         assert!(ItemCandidate::Element(37) < ItemCandidate::Element(51));
         assert!(ItemCandidate::Element(51) > ItemCandidate::Element(37));
     }
