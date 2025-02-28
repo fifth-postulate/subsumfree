@@ -15,7 +15,7 @@ struct Input {
 fn main() {
     let input = Input::parse();
 
-    let seq: Vec<usize> = Sequence::with_maximum(input.a, input.b, input.c, input.ceiling)
+    let seq: Vec<usize> = Sequence::with_maximum(vec![input.a, input.b, input.c], input.ceiling)
         .take(input.length)
         .collect();
 

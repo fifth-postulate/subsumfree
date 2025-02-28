@@ -52,18 +52,19 @@ pub struct Sequence {
 }
 
 impl Sequence {
-    pub fn new(a: usize, b: usize, c: usize) -> Self {
-        Sequence::initialize(a, b, c, Option::None)
+    pub fn new(initial: Vec<usize>) -> Self {
+        Sequence::initialize(initial, Option::None)
     }
 
-    pub fn with_maximum(a: usize, b: usize, c: usize, maximum: usize) -> Self {
-        Sequence::initialize(a, b, c, Option::Some(ItemCandidate::Element(maximum)))
+    pub fn with_maximum(initial: Vec<usize>, maximum: usize) -> Self {
+        Sequence::initialize(initial, Option::Some(ItemCandidate::Element(maximum)))
     }
 
-    fn initialize(a: usize, b: usize, c: usize, maximum: Option<ItemCandidate>) -> Self {
-        let elements: BTreeSet<usize> = [a, b, c].into_iter().collect();
+    fn initialize(initial: Vec<usize>, maximum: Option<ItemCandidate>) -> Self {
+        let elements: BTreeSet<usize> = initial.iter().cloned().collect();
+        let next = initial[initial.len() - 1] + 1;
         Self {
-            current: ItemCandidate::Index(0, vec![a, b, c], c + 1),
+            current: ItemCandidate::Index(0, initial, next),
             elements,
             maximum,
         }
@@ -151,7 +152,7 @@ mod tests {
 
     #[test]
     fn sequence_computes_correct_elements() {
-        let actual: Vec<usize> = Sequence::new(1, 3, 5).take(10).collect();
+        let actual: Vec<usize> = Sequence::new(vec![1, 3, 5]).take(10).collect();
         let expected: Vec<usize> = vec![1, 3, 5, 6, 7, 8, 22, 23, 24, 25];
 
         assert_eq!(actual, expected);
@@ -159,7 +160,7 @@ mod tests {
 
     #[test]
     fn sequence_with_maximum_computes_correct_elements() {
-        let actual: Vec<usize> = Sequence::with_maximum(1, 3, 5, 20).take(10).collect();
+        let actual: Vec<usize> = Sequence::with_maximum(vec![1, 3, 5], 20).take(10).collect();
         let expected: Vec<usize> = vec![1, 3, 5, 6, 7, 8];
 
         assert_eq!(actual, expected);

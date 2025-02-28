@@ -23,7 +23,7 @@ fn main() {
     for a in 1..=input.a {
         for b in (a + 1)..=input.b {
             for c in (b + 1)..=input.c {
-                let seq: Vec<usize> = Sequence::with_maximum(a, b, c, input.ceiling)
+                let seq: Vec<usize> = Sequence::with_maximum(vec![a, b, c], input.ceiling)
                     .take(input.length)
                     .collect();
                 let mut found = false;
