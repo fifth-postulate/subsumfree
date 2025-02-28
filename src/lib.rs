@@ -61,7 +61,7 @@ impl Sequence {
     }
 
     fn initialize(a: usize, b: usize, c: usize, maximum: Option<ItemCandidate>) -> Self {
-        let elements: BTreeSet<usize> = [a, b, c].iter().cloned().collect();
+        let elements: BTreeSet<usize> = [a, b, c].into_iter().collect();
         Self {
             current: ItemCandidate::Index(0, vec![a, b, c], c + 1),
             elements,
