@@ -3,6 +3,7 @@ use std::collections::BTreeSet;
 use std::ops::Bound;
 
 pub mod character;
+pub mod combinatorics;
 pub mod period;
 pub mod word;
 
