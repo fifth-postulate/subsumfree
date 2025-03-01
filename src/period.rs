@@ -78,7 +78,6 @@ mod tests {
 
         match detect_cycle(&sequence) {
             Option::Some(info) => {
-                println!("{:?}", info);
                 assert_eq!(info, Info::new(5, 3));
             }
             Option::None => {

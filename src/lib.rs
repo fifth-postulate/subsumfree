@@ -4,6 +4,7 @@ use std::ops::Bound;
 
 pub mod character;
 pub mod period;
+pub mod word;
 
 #[derive(Debug, PartialEq, Eq)]
 enum ItemCandidate {
