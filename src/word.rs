@@ -25,8 +25,8 @@ impl Iterator for Combinations {
     fn next(&mut self) -> Option<Self::Item> {
         match &self.current {
             Option::Some(current) => {
-                let mut combination: Vec<usize> = current.iter().cloned().collect();
-                let result = Option::Some(combination.iter().cloned().collect());
+                let mut combination: Vec<usize> = current.to_vec();
+                let result = Option::Some(combination.to_vec());
                 let mut index = combination.len() - 2;
                 let mut count = 1;
                 while index > 0 && combination[index] == 1 {
