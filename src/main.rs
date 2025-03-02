@@ -1,5 +1,5 @@
 use clap::Parser;
-use sequence::Sequence;
+use sequence::word::Sequence;
 
 #[derive(Parser)]
 struct Input {

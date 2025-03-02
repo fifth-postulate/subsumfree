@@ -1,6 +1,6 @@
 use clap::Parser;
-use sequence::Sequence;
 use sequence::period::detect_cycle;
+use sequence::word::Sequence;
 
 #[derive(Parser)]
 struct Input {
