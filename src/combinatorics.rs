@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq, Eq)]
 pub struct Combinations {
     t: usize,
     current: Option<Vec<usize>>,
@@ -34,6 +35,9 @@ impl Iterator for Combinations {
                     index -= 1;
                     count += 1;
                 }
+                if index == 0 && combination[index] == 1 {
+                    count += 1;
+                }
                 if count < self.t {
                     while index > 0 && combination[index] == 0 {
                         index -= 1;
@@ -61,7 +65,7 @@ mod tests {
     use super::Combinations;
 
     #[test]
-    fn combinations_4_2_generates_possibilities() {
+    fn combinations_4_2_generates_all_possibilities() {
         let actual: Vec<Vec<usize>> = Combinations::new(4, 2).collect();
         let expected = vec![vec![1, 0, 0, 1], vec![0, 1, 0, 1], vec![0, 0, 1, 1]];
         assert_eq!(actual, expected);
@@ -82,7 +86,7 @@ mod tests {
     }
 
     #[test]
-    fn combinations_6_4_generates_possibilities() {
+    fn combinations_6_4_generates_all_possibilities() {
         let actual: Vec<Vec<usize>> = Combinations::new(6, 4).collect();
         let expected = vec![
             vec![1, 1, 1, 0, 0, 1],
@@ -96,6 +100,14 @@ mod tests {
             vec![0, 1, 0, 1, 1, 1],
             vec![0, 0, 1, 1, 1, 1],
         ];
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn combinatations_3_3_generates_all_possibilities() {
+        let actual: Vec<Vec<usize>> = Combinations::new(3, 3).collect();
+        let expected = vec![vec![1, 1, 1]];
 
         assert_eq!(actual, expected);
     }
