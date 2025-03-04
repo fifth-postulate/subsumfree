@@ -87,6 +87,29 @@ impl Sequence {
             expressions,
         }
     }
+
+    fn unexpressable(&mut self, c: usize) -> Option<usize> {
+        self.elements.insert(c);
+        let prefix: Vec<usize> = self.elements.iter().cloned().collect();
+        self.expressions.push(Data::new(self.t, &prefix));
+        self.current = self.current.next();
+        Option::Some(c)
+    }
+
+    fn expressable(&mut self) {
+        let data = self.expressions.pop().unwrap(/* safe because we peeked */);
+        if let Option::Some(next) = data.progress() {
+            self.expressions.push(next);
+        }
+        self.current = self.current.next();
+    }
+
+    fn unknown(&mut self) {
+        let data = self.expressions.pop().unwrap(/* safe because we peeked */);
+        if let Option::Some(next) = data.progress() {
+            self.expressions.push(next);
+        }
+    }
 }
 
 impl Iterator for Sequence {
@@ -111,44 +134,15 @@ impl Iterator for Sequence {
                         Option::Some(peek) => {
                             if *c < peek.n {
                                 // c is unexpressable
-                                result = Option::Some(*c);
-                                self.elements.insert(*c);
-                                // add new expression
-                                let prefix: Vec<usize> = self.elements.iter().cloned().collect();
-                                self.expressions.push(Data::new(self.t, &prefix));
-                                self.current = self.current.next();
+                                result = self.unexpressable(*c);
                             } else if *c == peek.n {
-                                // c is expressable, remove smallest expression, next c
-                                let data =
-                                    self.expressions.pop().unwrap(/* safe because we peeked */);
-                                match data.progress() {
-                                    Option::Some(next) => {
-                                        self.expressions.push(next);
-                                    }
-                                    Option::None => { /* do nothing */ }
-                                }
-                                self.current = self.current.next();
+                                self.expressable();
                             } else {
-                                // c > peek.n we don't know if c is expressable
-                                let data =
-                                    self.expressions.pop().unwrap(/* safe because we peeked */);
-                                match data.progress() {
-                                    Option::Some(next) => {
-                                        self.expressions.push(next);
-                                    }
-                                    Option::None => { /* do nothing */ }
-                                }
+                                self.unknown();
                             }
                         }
                         Option::None => {
-                            /* no minimum candidates so unexpressable */
-                            // c is unexpressable
-                            result = Option::Some(*c);
-                            self.elements.insert(*c);
-                            // add new expression
-                            let prefix: Vec<usize> = self.elements.iter().cloned().collect();
-                            self.expressions.push(Data::new(self.t, &prefix));
-                            self.current = self.current.next();
+                            result = self.unexpressable(*c);
                         }
                     }
                 }
