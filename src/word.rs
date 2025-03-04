@@ -1,6 +1,5 @@
 use crate::combinatorics::Combinations;
 use crate::item::ItemCandidate;
-use std::collections::BTreeSet as Set;
 use std::collections::BinaryHeap;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -38,7 +37,7 @@ impl Data {
                     .sum()
             })
             .map(|n: usize| Data {
-                n: n,
+                n,
                 weights: self.weights,
                 iterator,
             })
@@ -60,7 +59,7 @@ impl PartialOrd for Data {
 pub struct Sequence {
     t: usize,
     current: ItemCandidate,
-    elements: Set<usize>,
+    elements: Vec<usize>,
     ceiling: Option<ItemCandidate>,
     expressions: BinaryHeap<Data>,
 }
@@ -75,7 +74,7 @@ impl Sequence {
     }
 
     fn initialize(initial: Vec<usize>, ceiling: Option<ItemCandidate>) -> Self {
-        let elements: Set<usize> = initial.iter().cloned().collect();
+        let elements: Vec<usize> = initial.iter().cloned().collect();
         let n = initial.len();
         let mut expressions: BinaryHeap<Data> = BinaryHeap::new();
         expressions.push(Data::new(n, &initial));
@@ -89,7 +88,7 @@ impl Sequence {
     }
 
     fn unexpressable(&mut self, c: usize) -> Option<usize> {
-        self.elements.insert(c);
+        self.elements.push(c);
         let prefix: Vec<usize> = self.elements.iter().cloned().collect();
         self.expressions.push(Data::new(self.t, &prefix));
         self.current = self.current.next();
