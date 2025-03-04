@@ -97,14 +97,11 @@ impl Sequence {
     }
 
     fn expressable(&mut self) {
-        let data = self.expressions.pop().unwrap(/* safe because we peeked */);
-        if let Option::Some(next) = data.progress() {
-            self.expressions.push(next);
-        }
+        self.progress_minimum_expression();
         self.current = self.current.next();
     }
 
-    fn unknown(&mut self) {
+    fn progress_minimum_expression(&mut self) {
         let data = self.expressions.pop().unwrap(/* safe because we peeked */);
         if let Option::Some(next) = data.progress() {
             self.expressions.push(next);
@@ -129,23 +126,20 @@ impl Iterator for Sequence {
                     result = Option::Some(initial[*index]);
                     self.current = self.current.next();
                 }
-                ItemCandidate::Element(c) => {
-                    match self.expressions.peek() {
-                        Option::Some(peek) => {
-                            if *c < peek.n {
-                                // c is unexpressable
-                                result = self.unexpressable(*c);
-                            } else if *c == peek.n {
-                                self.expressable();
-                            } else {
-                                self.unknown();
-                            }
-                        }
-                        Option::None => {
+                ItemCandidate::Element(c) => match self.expressions.peek() {
+                    Option::Some(peek) => {
+                        if *c < peek.n {
                             result = self.unexpressable(*c);
+                        } else if *c == peek.n {
+                            self.expressable();
+                        } else {
+                            self.progress_minimum_expression();
                         }
                     }
-                }
+                    Option::None => {
+                        result = self.unexpressable(*c);
+                    }
+                },
             }
         }
         result
