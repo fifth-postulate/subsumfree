@@ -1,6 +1,6 @@
 use clap::Parser;
 use sequence::character::determine_character;
-use sequence::word::Sequence;
+use sequence::word::combination::Sequence;
 
 #[derive(Parser)]
 struct Input {

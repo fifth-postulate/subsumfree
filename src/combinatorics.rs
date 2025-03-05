@@ -99,15 +99,9 @@ impl Iterator for Expressions {
                         expression[index] -= 1;
                         expression[index + 1] += 1;
                     } else {
-                        // expression[index] == 1
-                        // if index == n - 1 {
-                        //     expression[index] = 0;
-                        //     expression[index + 1] += 1;
-                        // } else {
                         expression[index] = 0;
                         expression[index + 1] = 1;
                         expression.swap(index + 1, n);
-                        // }
                     }
                     self.current = Option::Some(expression);
                 } else {
