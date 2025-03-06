@@ -1,6 +1,7 @@
 use clap::Parser;
 use sequence::period::detect_cycle;
-use sequence::word::combination::Sequence;
+use sequence::word::combination::Sequence as CombinationSequence;
+use sequence::word::expression::Sequence as ExpressionSequence;
 
 #[derive(Parser)]
 struct Input {
@@ -12,6 +13,8 @@ struct Input {
     min: usize,
     #[arg(long, default_value_t = 50)]
     max: usize,
+    #[arg(short, long, default_value_t = false)]
+    duplicate: bool,
     a: usize,
     b: usize,
     c: usize,
@@ -23,9 +26,19 @@ fn main() {
     for a in 1..=input.a {
         for b in (a + 1)..=input.b {
             for c in (b + 1)..=input.c {
-                let seq: Vec<usize> = Sequence::with_maximum(vec![a, b, c], input.ceiling)
-                    .take(input.length)
-                    .collect();
+                let iterator: Box<dyn Iterator<Item = usize>> = if input.duplicate {
+                    Box::new(ExpressionSequence::with_maximum(
+                        vec![input.a, input.b, input.c],
+                        input.ceiling,
+                    ))
+                } else {
+                    Box::new(CombinationSequence::with_maximum(
+                        vec![input.a, input.b, input.c],
+                        input.ceiling,
+                    ))
+                };
+
+                let seq: Vec<usize> = iterator.take(input.length).collect();
                 let mut found = false;
                 for modules in input.min..input.max {
                     let mod_seq: Vec<usize> = seq.iter().map(|n| n % modules).collect();
