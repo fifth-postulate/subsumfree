@@ -32,4 +32,4 @@ fn main() {
     let seq: Vec<usize> = iterator.take(input.length).collect();
 
     println!("{} {:?}", seq.len(), seq);
-
+}
