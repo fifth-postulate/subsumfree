@@ -37,4 +37,13 @@ mod tests {
         let weights: BTreeSet<usize> = vec![1, 3, 5].into_iter().collect();
         assert_eq!(ExpressionResult::Unexpressable, express(8, &weights))
     }
+
+    #[test]
+    fn nine_can_be_expressed_in_1_3_5() {
+        let weights: BTreeSet<usize> = vec![1, 3, 5].into_iter().collect();
+        assert_eq!(
+            ExpressionResult::Expressable(vec![[1, 3, 5]]),
+            express(9, &weights)
+        )
+    }
 }
