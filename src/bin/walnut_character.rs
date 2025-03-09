@@ -1,8 +1,8 @@
 use std::io::{self};
 
 use clap::Parser;
-use sequence::character::determine_character;
 use sequence::combinatorics::combination::Sequence;
+use sequence::tools::character::determine_character;
 
 #[derive(Parser)]
 struct Input {

@@ -1,3 +1,4 @@
+pub mod character;
 pub mod period;
 
 use std::cmp::Ordering;
