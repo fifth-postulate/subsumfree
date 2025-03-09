@@ -1,5 +1,5 @@
 use crate::combinatorics::Combinations;
-use crate::item::ItemCandidate;
+use crate::tools::ItemCandidate;
 use std::collections::BinaryHeap;
 
 #[derive(Debug, PartialEq, Eq)]
