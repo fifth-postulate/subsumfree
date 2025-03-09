@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 use std::ops::Bound;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ExpressionResult {
     Unexpressable,
     Expressable(Vec<[usize; 3]>),
@@ -24,5 +24,17 @@ pub fn express(n: usize, elements: &BTreeSet<usize>) -> ExpressionResult {
         ExpressionResult::Unexpressable
     } else {
         ExpressionResult::Expressable(expressions)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{ExpressionResult, express};
+    use std::collections::BTreeSet;
+
+    #[test]
+    fn eight_can_not_be_expressed_in_1_3_5() {
+        let weights: BTreeSet<usize> = vec![1, 3, 5].into_iter().collect();
+        assert_eq!(ExpressionResult::Unexpressable, express(8, &weights))
     }
 }
