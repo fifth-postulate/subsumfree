@@ -1,4 +1,4 @@
-use crate::combinatorics::Expressions;
+use crate::combinatorics::Words;
 use crate::item::ItemCandidate;
 use std::collections::BinaryHeap;
 
@@ -6,14 +6,14 @@ use std::collections::BinaryHeap;
 struct Data {
     n: usize,
     weights: Vec<usize>,
-    iterator: Expressions,
+    iterator: Words,
 }
 
 impl Data {
     fn new(t: usize, elements: &[usize]) -> Self {
         let m = elements.len();
         let weights = elements.into_iter().cloned().collect();
-        let mut iterator = Expressions::new(m, t);
+        let mut iterator = Words::new(m, t);
 
         let n = iterator
             .next()

@@ -1,47 +1,47 @@
 #[derive(Debug, PartialEq, Eq)]
-pub struct Expressions {
-    t: usize,
+pub struct Words {
+    weight: usize,
     current: Option<Vec<usize>>,
 }
 
-impl Expressions {
-    pub fn new(n: usize, t: usize) -> Self {
-        let mut current: Vec<usize> = vec![0; n];
-        if n > 0 {
-            current[n - 1] = 1;
-            current[0] = t - 1
+impl Words {
+    pub fn new(length: usize, weight: usize) -> Self {
+        let mut current: Vec<usize> = vec![0; length];
+        if length > 0 {
+            current[length - 1] = 1;
+            current[0] = weight - 1
         }
         Self {
-            t,
+            weight,
             current: Option::Some(current),
         }
     }
 }
 
-impl Iterator for Expressions {
+impl Iterator for Words {
     type Item = Vec<usize>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match &self.current {
             Option::Some(current) => {
-                let mut expression: Vec<usize> = current.to_vec();
-                let result = Option::Some(expression.to_vec());
-                let n = expression.len() - 1;
+                let mut current_word: Vec<usize> = current.to_vec();
+                let result = Option::Some(current_word.to_vec());
+                let n = current_word.len() - 1;
                 let mut index = n;
-                if expression[index] < self.t {
+                if current_word[index] < self.weight {
                     index -= 1;
-                    while index > 0 && expression[index] == 0 {
+                    while index > 0 && current_word[index] == 0 {
                         index -= 1;
                     }
-                    if expression[index] > 1 || index == n - 1 {
-                        expression[index] -= 1;
-                        expression[index + 1] += 1;
+                    if current_word[index] > 1 || index == n - 1 {
+                        current_word[index] -= 1;
+                        current_word[index + 1] += 1;
                     } else {
-                        expression[index] = 0;
-                        expression[index + 1] = 1;
-                        expression.swap(index + 1, n);
+                        current_word[index] = 0;
+                        current_word[index + 1] = 1;
+                        current_word.swap(index + 1, n);
                     }
-                    self.current = Option::Some(expression);
+                    self.current = Option::Some(current_word);
                 } else {
                     self.current = Option::None;
                 }
@@ -54,11 +54,11 @@ impl Iterator for Expressions {
 
 #[cfg(test)]
 mod tests {
-    use super::Expressions;
+    use super::Words;
 
     #[test]
-    fn expressions_4_3_generates_all_possibilities() {
-        let actual: Vec<Vec<usize>> = Expressions::new(4, 3).collect();
+    fn words_4_3_generates_all_possibilities() {
+        let actual: Vec<Vec<usize>> = Words::new(4, 3).collect();
         let expected = vec![
             vec![2, 0, 0, 1],
             vec![1, 1, 0, 1],
@@ -75,8 +75,8 @@ mod tests {
     }
 
     #[test]
-    fn expressions_3_4_generates_all_possibilities() {
-        let actual: Vec<Vec<usize>> = Expressions::new(3, 5).collect();
+    fn words_3_4_generates_all_possibilities() {
+        let actual: Vec<Vec<usize>> = Words::new(3, 5).collect();
         let expected = vec![
             vec![4, 0, 1],
             vec![3, 1, 1],
