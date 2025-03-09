@@ -45,7 +45,7 @@ pub fn detect_cycle(elements: &[usize]) -> Option<Info> {
 
 #[cfg(test)]
 mod tests {
-    use crate::period::{Info, detect_cycle};
+    use super::{Info, detect_cycle};
 
     #[test]
     fn monotonic_increasing_sequence_does_not_have_a_cycle() {

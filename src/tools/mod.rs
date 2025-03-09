@@ -1,3 +1,5 @@
+pub mod period;
+
 use std::cmp::Ordering;
 
 #[derive(Debug, PartialEq, Eq)]
