@@ -2,7 +2,7 @@ use std::io::{self};
 
 use clap::Parser;
 use sequence::character::determine_character;
-use sequence::word::combination::Sequence;
+use sequence::combinatorics::combination::Sequence;
 
 #[derive(Parser)]
 struct Input {

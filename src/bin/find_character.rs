@@ -1,6 +1,6 @@
 use clap::Parser;
 use sequence::character::determine_character;
-use sequence::word::combination::Sequence as CombinationSequence;
+use sequence::combinatorics::combination::Sequence as CombinationSequence;
 use sequence::word::expression::Sequence as ExpressionSequence;
 
 #[derive(Parser)]
