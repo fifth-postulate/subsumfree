@@ -1,5 +1,8 @@
+pub use sequence::Sequence;
 use std::collections::BTreeSet;
 use std::ops::Bound;
+
+mod sequence;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ExpressionResult {
