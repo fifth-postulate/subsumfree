@@ -1,7 +1,7 @@
 use clap::Parser;
 use sequence::combinatorics::combination::Sequence as CombinationSequence;
+use sequence::combinatorics::word::Sequence as ExpressionSequence;
 use sequence::period::detect_cycle;
-use sequence::word::expression::Sequence as ExpressionSequence;
 
 #[derive(Parser)]
 struct Input {

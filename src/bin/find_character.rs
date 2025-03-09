@@ -1,7 +1,7 @@
 use clap::Parser;
 use sequence::character::determine_character;
 use sequence::combinatorics::combination::Sequence as CombinationSequence;
-use sequence::word::expression::Sequence as ExpressionSequence;
+use sequence::combinatorics::word::Sequence as ExpressionSequence;
 
 #[derive(Parser)]
 struct Input {

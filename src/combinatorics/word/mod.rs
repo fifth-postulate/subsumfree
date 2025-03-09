@@ -1,3 +1,7 @@
+mod sequence;
+
+pub use sequence::Sequence;
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct Words {
     weight: usize,
