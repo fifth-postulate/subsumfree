@@ -1,16 +1,23 @@
+//! The `period` module allow the detection of cycles.
+
 use std::fmt::Display;
 
+/// Provides information about the period
 #[derive(Debug, PartialEq, Eq)]
 pub struct Info {
+    /// The length of the pre-period
     pub pre_period: usize,
+    /// The length of the period.
     pub period: usize,
 }
 
 impl Info {
+    /// Create `Info` with the pre-period and period.
     pub fn new(pre_period: usize, period: usize) -> Self {
         Self { pre_period, period }
     }
 
+    /// Check if a sequence adheres to the `Info`.
     pub fn check(&self, elements: &[usize]) -> bool {
         for index in (self.pre_period + self.period)..elements.len() {
             if elements[index] != elements[index - self.period] {
@@ -27,6 +34,7 @@ impl Display for Info {
     }
 }
 
+/// Try to find the `Info` of this sequence.
 pub fn detect_cycle(elements: &[usize]) -> Option<Info> {
     for pre_period in 0..(elements.len() / 2) {
         for period in 1..(elements.len() / 2) {

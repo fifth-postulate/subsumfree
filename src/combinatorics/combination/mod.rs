@@ -1,7 +1,23 @@
+//! A [Combination](https://en.wikipedia.org/wiki/Combination) is
+//!
+//! > a selection of items from a set that has distinct members, such that the
+//! > order of selection does not matter.
+//!
+//! The `combination` module allows to iterate over all _characteristic words_
+//! of all combinations of certain number of elements.
+//!
+//! ```
+//! # use sequence::combinatorics::Combinations;
+//! let actual = Combinations::new(5,2).count();
+//! let expected = 4;
+//! assert_eq!(actual, expected);
+//! ```
+
 mod sequence;
 
 pub use sequence::Sequence;
 
+/// An iterator for characteristic words of combinations.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Combinations {
     t: usize,
@@ -9,6 +25,8 @@ pub struct Combinations {
 }
 
 impl Combinations {
+    /// Creates an iterator that iterates over all characteristic words of
+    /// combinations of n elements where t are chosen.
     pub fn new(n: usize, t: usize) -> Self {
         let mut current: Vec<usize> = vec![0; n];
         if n > 0 {

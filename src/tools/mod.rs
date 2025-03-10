@@ -1,16 +1,28 @@
+//! The `tools` module contains various utility data structures and methods
+//! that work on subsumfree sequences.
+
 pub mod character;
 pub mod expression;
 pub mod period;
 
 use std::cmp::Ordering;
 
+/// An `ItemCandidate` keeps track which element is under scrutiny.
 #[derive(Debug, PartialEq, Eq)]
 pub enum ItemCandidate {
+    /// An index into the initial sequence. Certainly part of the sequence.
     Index(usize, Vec<usize>),
+    /// A candidate for which it needs to be determined if it is part of the sequence.
     Element(usize),
 }
 
 impl ItemCandidate {
+    /// Determine the next `ItemCandidate`.
+    ///
+    /// It there still is a initial segment left, increment the index.
+    /// Otherwise, either
+    /// * pick the smallest number bigger than the initial segment.
+    /// * Or pick the next number after the current candidate.
     pub fn next(&self) -> Self {
         match self {
             ItemCandidate::Index(index, initial) if (*index + 1) < initial.len() => {

@@ -1,3 +1,5 @@
+//! A sequence based on words.
+
 use crate::combinatorics::Words;
 use crate::tools::ItemCandidate;
 use std::collections::BinaryHeap;
@@ -56,6 +58,7 @@ impl PartialOrd for Data {
     }
 }
 
+/// The sequence
 pub struct Sequence {
     t: usize,
     current: ItemCandidate,
@@ -65,10 +68,12 @@ pub struct Sequence {
 }
 
 impl Sequence {
+    /// Create a sequence with an initial segment.
     pub fn new(initial: Vec<usize>) -> Self {
         Self::initialize(initial, Option::None)
     }
 
+    /// Create a sequence with an initial segment
     pub fn with_maximum(initial: Vec<usize>, ceiling: usize) -> Self {
         Self::initialize(initial, Option::Some(ItemCandidate::Element(ceiling)))
     }

@@ -1,8 +1,16 @@
+//! Provides the character of a subsumfree sequence.
+
 use crate::tools::period;
 use crate::tools::period::detect_cycle;
 use std::collections::BTreeSet as Set;
 use std::fmt::Display;
 
+/// The `Character` consists of
+///
+/// 1. The period info.
+/// 2. The modulus.
+/// 3. The elements only in the pre-period.
+/// 4. The elements in the period.
 #[derive(Debug)]
 pub struct Character {
     info: period::Info,
@@ -12,6 +20,7 @@ pub struct Character {
 }
 
 impl Character {
+    /// Create a `Character` with all relevant information.
     pub fn new(
         info: period::Info,
         modulus: usize,
@@ -26,6 +35,8 @@ impl Character {
         }
     }
 
+    /// Write a Walnut script that can check te claim that the subsumfree
+    /// sequence is correctly characterized.
     pub fn write_walnut<T>(&self, name: &str, f: &mut T) -> Result<(), std::io::Error>
     where
         T: std::io::Write,
@@ -60,6 +71,7 @@ impl Display for Character {
     }
 }
 
+/// Determine the `Character` of a sequence.
 pub fn determine_character(seq: &[usize]) -> Option<Character> {
     let differences: Vec<usize> = seq.windows(2).map(|t| t[1] - t[0]).collect();
 

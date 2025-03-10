@@ -1,7 +1,13 @@
+//! This module provides the sequence best on expressablility
+//!
+//! Due to the limitation of `express` can only start with initial segment of
+//! three.
+
 use crate::tools::ItemCandidate;
 use crate::tools::expression::{ExpressionResult, express};
 use std::collections::BTreeSet;
 
+/// The sequence
 #[derive(Debug)]
 pub struct Sequence {
     current: ItemCandidate,
@@ -10,10 +16,12 @@ pub struct Sequence {
 }
 
 impl Sequence {
+    /// Creates a sequence with an initial segment
     pub fn new(initial: Vec<usize>) -> Self {
         Sequence::initialize(initial, Option::None)
     }
 
+    /// Create a sequence with an inital segment and a ceiling
     pub fn with_maximum(initial: Vec<usize>, maximum: usize) -> Self {
         Sequence::initialize(initial, Option::Some(ItemCandidate::Element(maximum)))
     }

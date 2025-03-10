@@ -1,7 +1,9 @@
+//! A word is a sequence of weights of a certain length and weight.
 mod sequence;
 
 pub use sequence::Sequence;
 
+/// An iterator for all words of certain length and weight.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Words {
     weight: usize,
@@ -9,6 +11,7 @@ pub struct Words {
 }
 
 impl Words {
+    /// Creates an iterator for all words of certain length and weight.
     pub fn new(length: usize, weight: usize) -> Self {
         let mut current: Vec<usize> = vec![0; length];
         if length > 0 {

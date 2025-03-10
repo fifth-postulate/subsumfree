@@ -1,3 +1,16 @@
+//! This module provides a subsumfree sequence that is based on combinations.
+//!
+//! ## Example
+//! The following code demonstrates the
+//! canonical S_1,2,3 sequences.
+//!
+//! ```
+//! # use sequence::combinatorics::combination::Sequence;
+//! let actual: Vec<usize> = Sequence::new(vec![1,2,3]).take(8).collect();
+//! let expected: Vec<usize> = vec![1,2,3,4,5,13,14,15];
+//! assert_eq!(actual, expected);
+//! ```
+
 use crate::combinatorics::Combinations;
 use crate::tools::ItemCandidate;
 use std::collections::BinaryHeap;
@@ -56,6 +69,7 @@ impl PartialOrd for Data {
     }
 }
 
+/// Subsumfree sequences with an arbitrary initial seqeunce.
 pub struct Sequence {
     t: usize,
     current: ItemCandidate,
@@ -65,10 +79,32 @@ pub struct Sequence {
 }
 
 impl Sequence {
+    /// Creates a `Sequence` with an arbitrary initial sequence.
+    ///
+    /// ```
+    /// # use sequence::combinatorics::combination::Sequence;
+    /// let mut iterator = Sequence::new(vec![1,2,3]);
+    /// let max = iterator.take(8).max();
+    ///
+    /// assert_eq!(max, Some(15));
+    /// ```
     pub fn new(initial: Vec<usize>) -> Self {
         Self::initialize(initial, Option::None)
     }
 
+    /// Creates a `Sequence` with an arbitrary initial sequence and a ceiling.
+    ///
+    /// The ceiling retricts the maximum allowed elements in the sequence.
+    ///
+    /// ```
+    /// # use std::collections::BTreeSet;
+    /// # use sequence::combinatorics::combination::Sequence;
+    /// let mut iterator = Sequence::with_maximum(vec![1,2,3], 10);
+    /// let actual: Vec<usize> = iterator.take(8).collect();
+    /// let expected: Vec<usize> = vec![1,2,3,4,5];
+    ///
+    /// assert_eq!(actual, expected);
+    /// ```
     pub fn with_maximum(initial: Vec<usize>, ceiling: usize) -> Self {
         Self::initialize(initial, Option::Some(ItemCandidate::Element(ceiling)))
     }
