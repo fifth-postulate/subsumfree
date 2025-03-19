@@ -1,6 +1,5 @@
 use clap::Parser;
-use sequence::combinatorics::combination::Sequence as CombinationSequence;
-use sequence::combinatorics::word::Sequence as ExpressionSequence;
+use sequence::sequence;
 
 #[derive(Parser)]
 struct Input {
@@ -10,25 +9,14 @@ struct Input {
     ceiling: usize,
     #[arg(short, long, default_value_t = false)]
     duplicate: bool,
-    a: usize,
-    b: usize,
-    c: usize,
+    initial: Vec<usize>,
 }
 
 fn main() {
     let input = Input::parse();
 
-    let iterator: Box<dyn Iterator<Item = usize>> = if input.duplicate {
-        Box::new(ExpressionSequence::with_maximum(
-            vec![input.a, input.b, input.c],
-            input.ceiling,
-        ))
-    } else {
-        Box::new(CombinationSequence::with_maximum(
-            vec![input.a, input.b, input.c],
-            input.ceiling,
-        ))
-    };
+    let iterator: Box<dyn Iterator<Item = usize>> =
+        sequence(input.initial, input.ceiling, input.duplicate);
     let seq: Vec<usize> = iterator.take(input.length).collect();
 
     println!("{} {:?}", seq.len(), seq);
