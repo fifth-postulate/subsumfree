@@ -15,7 +15,7 @@ use crate::combinatorics::Combinations;
 use crate::tools::ItemCandidate;
 use std::collections::BinaryHeap;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Eq, PartialEq)]
 struct Data {
     n: usize,
     weights: Vec<usize>,
@@ -26,16 +26,19 @@ impl Data {
     fn new(t: usize, elements: &[usize]) -> Self {
         let m = elements.len();
         let weights = elements.into_iter().cloned().collect();
-        let mut iterator = Combinations::new(m, t);
+        let mut iterator = Combinations::new(m - 1, t - 1);
 
         let n = iterator
             .next()
-            .map(|word| word.iter().zip(&weights).map(|pair| pair.0 * pair.1).sum())
+            .map(|mut word| {
+                word.push(1);
+                word.iter().zip(&weights).map(|pair| pair.0 * pair.1).sum()
+            })
             .unwrap_or(0);
         Self {
             n,
             weights,
-            iterator,
+            iterator: iterator,
         }
     }
 
@@ -43,7 +46,8 @@ impl Data {
         let mut iterator = self.iterator;
         iterator
             .next()
-            .map(|word| {
+            .map(|mut word| {
+                word.push(1);
                 word.iter()
                     .zip(&self.weights)
                     .map(|pair| pair.0 * pair.1)
