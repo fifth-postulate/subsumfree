@@ -15,11 +15,14 @@ impl Data {
     fn new(t: usize, elements: &[usize]) -> Self {
         let m = elements.len();
         let weights = elements.into_iter().cloned().collect();
-        let mut iterator = Words::new(m, t);
+        let mut iterator = Words::new(m, t - 1);
 
         let n = iterator
             .next()
-            .map(|word| word.iter().zip(&weights).map(|pair| pair.0 * pair.1).sum())
+            .map(|mut word| {
+                word[m - 1] += 1;
+                word.iter().zip(&weights).map(|pair| pair.0 * pair.1).sum()
+            })
             .unwrap_or(0);
         Self {
             n,
@@ -32,7 +35,8 @@ impl Data {
         let mut iterator = self.iterator;
         iterator
             .next()
-            .map(|word| {
+            .map(|mut word| {
+                word[self.weights.len() - 1] += 1;
                 word.iter()
                     .zip(&self.weights)
                     .map(|pair| pair.0 * pair.1)
