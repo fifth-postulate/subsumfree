@@ -32,23 +32,27 @@ impl Iterator for Words {
             Option::Some(current) => {
                 let mut current_word: Vec<usize> = current.to_vec();
                 let result = Option::Some(current_word.to_vec());
-                let n = current_word.len() - 1;
-                let mut index = n;
-                if current_word[index] < self.weight {
-                    let residue = current_word[index];
-                    current_word[index] = 0;
-                    while index > 0 && current_word[index] == 0 {
-                        index -= 1;
-                    }
-
-                    if current_word[index] > 1 {
-                        current_word[index] -= 1;
-                        current_word[index + 1] = residue + 1;
-                    } else {
+                if current_word.len() > 0 {
+                    let n = current_word.len() - 1;
+                    let mut index = n;
+                    if current_word[index] < self.weight {
+                        let residue = current_word[index];
                         current_word[index] = 0;
-                        current_word[index + 1] = residue + 1;
+                        while index > 0 && current_word[index] == 0 {
+                            index -= 1;
+                        }
+
+                        if current_word[index] > 1 {
+                            current_word[index] -= 1;
+                            current_word[index + 1] = residue + 1;
+                        } else {
+                            current_word[index] = 0;
+                            current_word[index + 1] = residue + 1;
+                        }
+                        self.current = Option::Some(current_word);
+                    } else {
+                        self.current = Option::None;
                     }
-                    self.current = Option::Some(current_word);
                 } else {
                     self.current = Option::None;
                 }
@@ -117,6 +121,20 @@ mod tests {
             vec![0, 1, 4],
             vec![0, 0, 5],
         ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn words_of_length_zero_produce_the_empty_word() {
+        let actual: Vec<Vec<usize>> = Words::new(0, 37).collect();
+        let expected = vec![vec![]];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn words_of_weight_zero_only_produce_the_zero_word() {
+        let actual: Vec<Vec<usize>> = Words::new(4, 0).collect();
+        let expected = vec![vec![0, 0, 0, 0]];
         assert_eq!(actual, expected);
     }
 }
