@@ -3,6 +3,7 @@
 //! The `sequence` library allows one to examine _subsumfree_ sequences.
 
 pub mod combinatorics;
+pub mod density;
 pub mod tools;
 
 use combinatorics::combination::Sequence as CombinationSequence;
